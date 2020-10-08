@@ -20,6 +20,7 @@ class PDFKit
   attr_reader :options
 
   def initialize(url_file_or_html, options = {})
+    Rails.logger.info("############### source: #{source}")
     @source = Source.new(url_file_or_html)
 
     @stylesheets = []
@@ -34,7 +35,6 @@ class PDFKit
   def command(path = nil)
     args = [executable]
     args += @options.to_a.flatten.compact
-    args << '--quiet'
 
     if @source.html?
       args << '-' # Get HTML from stdin
@@ -50,19 +50,24 @@ class PDFKit
   def executable
     default = PDFKit.configuration.wkhtmltopdf
     return default if default !~ /^\// # its not a path, so nothing we can do
-    if File.exist?(default)
+    exe = if File.exist?(default)
       default
     else
       default.split('/').last
     end
+    Rails.logger.info("################ exe: #{exe}")
+
+    exe
   end
 
   def to_pdf(path=nil)
     append_stylesheets
 
+    Rails.logger.info("############### pdf path: #{path}")
     invoke = command(path)
 
     result = IO.popen(invoke, "wb+") do |pdf|
+      Rails.logger.info("############### source: #{@source.to_s}")
       pdf.puts(@source.to_s) if @source.html?
       pdf.close_write
       pdf.gets(nil)
