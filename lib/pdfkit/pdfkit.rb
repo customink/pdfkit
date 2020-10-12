@@ -67,7 +67,6 @@ class PDFKit
     invoke = command(path)
 
     result = IO.popen(invoke, "wb+") do |pdf|
-      Rails.logger.info("############### source: #{@source.to_s}")
       pdf.puts(@source.to_s) if @source.html?
       pdf.close_write
       pdf.gets(nil)

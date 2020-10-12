@@ -18,7 +18,9 @@ class PDFKit
       if rendering_pdf? && headers['Content-Type'] =~ /text\/html|application\/xhtml\+xml/
         body = response.respond_to?(:body) ? response.body : response.join
         body = body.join if body.is_a?(Array)
+        Rails.logger.info("##### input checksum: #{Digest::MD5.hexdigest(body)}")
         body = PDFKit.new(translate_paths(body, env), @options).to_pdf
+        Rails.logger.info("##### output checksum: #{Digest::MD5.hexdigest(body)}")
         response = [body]
 
         # Do not cache PDFs
