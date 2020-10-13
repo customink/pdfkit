@@ -20,9 +20,9 @@ class PDFKit
         body = body.join if body.is_a?(Array)
         sum = Digest::MD5.hexdigest(body)
         Rails.logger.info("##### input checksum: #{sum}")
-        Rails.logger.info(##################################### START BODY #{sum} #########################)
+        Rails.logger.info("##################################### START BODY #{sum} #########################")
         Rails.logger.info(body)
-        Rails.logger.info(##################################### END BODY #{sum} #########################)
+        Rails.logger.info("##################################### END BODY #{sum} #########################")
         body = PDFKit.new(translate_paths(body, env), @options).to_pdf
         Rails.logger.info("##### output checksum: #{Digest::MD5.hexdigest(body)}")
         response = [body]
