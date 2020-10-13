@@ -12,7 +12,9 @@ class PDFKit
       @request    = Rack::Request.new(env)
       @render_pdf = false
 
-      set_request_to_render_as_pdf(env) if render_as_pdf?
+      use_pdf = render_as_pdf?
+      Rails.logger.info("##### render_as_pdf?: #{use_pdf}")
+      set_request_to_render_as_pdf(env) if use_pdf
       status, headers, response = @app.call(env)
 
       if rendering_pdf? && headers['Content-Type'] =~ /text\/html|application\/xhtml\+xml/
@@ -33,6 +35,8 @@ class PDFKit
 
         headers["Content-Length"]         = (body.respond_to?(:bytesize) ? body.bytesize : body.size).to_s
         headers["Content-Type"]           = "application/pdf"
+        Rails.logger.info("#### status: #{status}")
+        Rails.logger.info("#### headers: #{headers.inspect}")
       end
 
       [status, headers, response]
