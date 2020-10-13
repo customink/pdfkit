@@ -16,7 +16,7 @@ class PDFKit
       Rails.logger.info("##### render_as_pdf?: #{use_pdf}")
       set_request_to_render_as_pdf(env) if use_pdf
       status, headers, response = @app.call(env)
-      Rails.logger.info("#### env app call: #{env.inspect}")
+      Rails.logger.info("#### env app call: #{env['REQUEST_URI']}")
       Rails.logger.info("#### status app call: #{status}")
       Rails.logger.info("#### headers app call: #{headers.inspect}")
 
