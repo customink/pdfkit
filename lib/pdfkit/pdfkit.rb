@@ -35,6 +35,7 @@ class PDFKit
   def command(path = nil)
     args = [executable]
     args += @options.to_a.flatten.compact
+    args << '--debug-javascript'
 
     if @source.html?
       args << '-' # Get HTML from stdin
@@ -44,7 +45,9 @@ class PDFKit
 
     args << (path || '-') # Write to file or stdout
 
-    args.shelljoin
+    ret = args.shelljoin
+    Rails.logger.info("################ args: #{ret}")
+    ret
   end
 
   def executable
