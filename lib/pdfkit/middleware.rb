@@ -16,6 +16,9 @@ class PDFKit
       Rails.logger.info("##### render_as_pdf?: #{use_pdf}")
       set_request_to_render_as_pdf(env) if use_pdf
       status, headers, response = @app.call(env)
+      Rails.logger.info("#### env app call: #{env.inspect}")
+      Rails.logger.info("#### status app call: #{status}")
+      Rails.logger.info("#### headers app call: #{headers.inspect}")
 
       if rendering_pdf? && headers['Content-Type'] =~ /text\/html|application\/xhtml\+xml/
         body = response.respond_to?(:body) ? response.body : response.join
@@ -35,8 +38,8 @@ class PDFKit
 
         headers["Content-Length"]         = (body.respond_to?(:bytesize) ? body.bytesize : body.size).to_s
         headers["Content-Type"]           = "application/pdf"
-        Rails.logger.info("#### status: #{status}")
-        Rails.logger.info("#### headers: #{headers.inspect}")
+        Rails.logger.info("#### status at end: #{status}")
+        Rails.logger.info("#### headers at end: #{headers.inspect}")
       end
 
       [status, headers, response]
@@ -53,6 +56,7 @@ class PDFKit
     end
 
     def rendering_pdf?
+      Rails.logger.info("##### rendering_pdf: #{@render_pdf}")
       @render_pdf
     end
 
@@ -85,6 +89,7 @@ class PDFKit
     end
 
     def set_request_to_render_as_pdf(env)
+      Rails.logger.info("##### in set_request_to_render_as_pdf")
       @render_pdf = true
       path = @request.path.sub(%r{\.pdf$}, '')
       %w[PATH_INFO REQUEST_URI].each { |e| env[e] = path }
