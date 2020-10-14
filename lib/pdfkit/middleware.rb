@@ -3,13 +3,14 @@ class PDFKit
   class Middleware
 
     def initialize(app, options = {}, conditions = {})
+      Rails.logger.info("#### initialize #{self.object_id}")
       @app        = app
       @options    = options
       @conditions = conditions
     end
 
     def call(env)
-      Rails.logger.info("#### START MIDDLEWARE call ##########################################")
+      Rails.logger.info("#### START MIDDLEWARE call ########################################## #{self.object_id}")
       @request    = Rack::Request.new(env)
       @render_pdf = false
 
@@ -49,7 +50,7 @@ class PDFKit
       end
 
       Rails.logger.info("#### COMPLETE middleware")
-      Rails.logger.info("########################################################")
+      Rails.logger.info("######################################################## #{self.object_id}")
       [status, headers, response]
     end
 
