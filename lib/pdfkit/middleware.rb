@@ -9,6 +9,7 @@ class PDFKit
     end
 
     def call(env)
+      Rails.logger.info("#### START MIDDLEWARE call ##########################################")
       @request    = Rack::Request.new(env)
       @render_pdf = false
 
@@ -21,6 +22,7 @@ class PDFKit
       Rails.logger.info("#### headers app call: #{headers.inspect}")
 
       if rendering_pdf? && headers['Content-Type'] =~ /text\/html|application\/xhtml\+xml/
+        Rails.logger.info("##### rendering_pdf == true and content-type: #{headers['Content-Type']}")
         body = response.respond_to?(:body) ? response.body : response.join
         body = body.join if body.is_a?(Array)
         sum = Digest::MD5.hexdigest(body)
@@ -38,10 +40,16 @@ class PDFKit
 
         headers["Content-Length"]         = (body.respond_to?(:bytesize) ? body.bytesize : body.size).to_s
         headers["Content-Type"]           = "application/pdf"
-        Rails.logger.info("#### status at end: #{status}")
-        Rails.logger.info("#### headers at end: #{headers.inspect}")
+        Rails.logger.info("####   status at end of render pdf: #{status}")
+        Rails.logger.info("####   headers at end of render pdf: #{headers.inspect}")
+      else
+        Rails.logger.info("##### SKIPPING RENDER")
+        Rails.logger.info("#####   rendering_pdf: #{@render_pdf}")
+        Rails.logger.info("####    headers at end: #{headers.inspect}")
       end
 
+      Rails.logger.info("#### COMPLETE middleware")
+      Rails.logger.info("########################################################")
       [status, headers, response]
     end
 
